@@ -1,0 +1,28 @@
+<h1>Products</h1>
+<div>
+  <table>
+
+    <tr>
+      <td><strong>Producto</strong></td>
+      <td><strong>Descripción</strong></td>
+      <td><strong>Precio</strong></td>
+      <td><strong>Código</strong></td>
+      <td><strong>Stock</strong></td>
+      <td><strong>Categoría</strong></td>
+    </tr>
+    {{#each docs}}
+      <div>
+        <tr>
+          <td>{{this.title}}</td>
+          <td>{{this.description}}</td>
+          <td>{{this.price}}</td>
+          <td>{{this.code}}</td>
+          <td>{{this.stock}}</td>
+          <td>{{this.category}}</td>
+          <input type="submit" value="enviar" />
+        </tr>
+      </div>
+
+    {{/each}}
+  </table>
+</div>

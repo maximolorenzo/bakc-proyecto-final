@@ -1,0 +1,16 @@
+<div>
+  <h1>Products</h1>
+  {{#if products}}
+    {{#each products}}
+      <div>
+        <p>{{this._id}}</p>
+        <p>{{this.title}}</p>
+        <p>{{this.price}}</p>
+      </div>
+    {{/each}}
+  {{else}}
+    <h2>No se encontraron productos</h2>
+  {{/if}}
+</div>
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/index.js"></script>

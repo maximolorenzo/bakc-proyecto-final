@@ -1,0 +1,25 @@
+[
+    {
+        "title": "wine",
+        "description": "description",
+        "code": "f231",
+        "price": 1220,
+        "category": "bebidas",
+        "thumbnail": [
+            "https://ardiaprod.vtexassets.com/arquivos/ids/235088/Vino-Tinto-Nicasia-Cabernet-Franc-750-Ml-_1.jpg?v=638060159438430000 "
+        ],
+        "status": true,
+        "id": 1
+    },
+    {
+        "title": "asd",
+        "description": "asd",
+        "code": "123",
+        "price": "123",
+        "status": true,
+        "stock": "123",
+        "category": "a",
+        "thumbnails": [],
+        "id": 2
+    }
+]

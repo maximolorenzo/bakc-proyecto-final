@@ -1,0 +1,23 @@
+<div>
+  <h1>Products</h1>
+  <div id="productsFront">
+
+  </div>
+</div>
+<form action="/api/products/realtimeproducts" method="post">
+  <p>Agregar producto</p>
+  <input type="text" name="title" placeholder="title" />
+  <input type="text" name="description" placeholder="description" />
+  <input name="code" type="text" placeholder="code" />
+  <input name="price" type="number" placeholder="price" />
+  <input name="category" type="text" placeholder="category" />
+  <input name="stock" type="number" placeholder="stock" />
+  <input type="submit" value="enviar" />
+</form>
+<form>
+  <p>Eliminar producto</p>
+  <input id="deleteID" placeholder="ID" />
+  <button id="deleteBtn" type="submit">Enviar</button>
+</form>
+
+<script src="/socket.io/socket.io.js"></script>
