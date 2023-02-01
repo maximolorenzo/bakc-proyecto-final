@@ -19,7 +19,12 @@
           <td>{{this.code}}</td>
           <td>{{this.stock}}</td>
           <td>{{this.category}}</td>
-          <input type="submit" value="enviar" />
+          <input
+            type="submit"
+            value="enviar"
+            method="post"
+            action="/api/carts/:cid"
+          />
         </tr>
       </div>
 
