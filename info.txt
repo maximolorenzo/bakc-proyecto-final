@@ -1,0 +1,12 @@
+http://127.0.0.1:8080/api/session/githubcallback
+Owned by: @maximolorenzo
+
+App ID: 292630
+
+Client ID: Iv1.7769b0b3e8c8f723
+
+https://github.com/apps/proyectoback
+
+2d9800f9375e373cf671cef59d709665e58d4d42
+
+proyectoBack

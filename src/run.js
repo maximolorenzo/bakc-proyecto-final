@@ -4,8 +4,9 @@ import productsModel from "./dao/models/products.models.js";
 import chatRouter from "./routes/chat.router.js";
 import messagesModel from "./dao/models/chat.model.js";
 import productsViewsRouter from "./routes/views router/product.views.router.js";
-
+import sessionRouter from "./routes/session.router.js";
 const run = (io, app) => {
+  app.use("/api/session", sessionRouter);
   app.use("/products", productsViewsRouter);
   app.use("/api/products", productRouter);
   app.use("/api/carts", cartRouter);
