@@ -1,58 +1,23 @@
 import { Router } from "express";
 
-import productsModel from "../dao/models/products.models.js";
+import {
+  getAll,
+  getById,
+  getRTP,
+  updateProduct,
+  create,
+} from "../controller/product.controler.js";
 
 const router = Router();
 
-router.get("/", async (req, res) => {
-  const products = await productsModel.find().lean().exec();
-  res.render("index", { products: products });
-});
+router.get("/", getAll);
 
-router.get("/realtimeproducts", async (req, res) => {
-  res.render("realTimeProducts", { script: "index.js" });
-});
+router.get("/realtimeproducts", getRTP);
 
-router.post("/realtimeproducts", async (req, res) => {
-  const product = req.body;
+router.get("/:id", getById);
 
-  const productAdd = await productsModel.create(product);
+router.post("/", create);
 
-  res.render("realTimeProducts", { script: "index.js" });
-});
-
-// router.delete("/:pid", async (req, res) => {
-//   const id = req.params.pid;
-//   const productDeleted = await productsModel.deleteOne({ _id: id });
-
-//   req.io.emit("updatedProducts", await productsModel.find().lean().exec());
-//   res.json({
-//     status: "Success",
-//     massage: "Product Deleted!",
-//     productDeleted,
-//   });
-// });
-router.put("/:pid", async (req, res) => {
-  const id = req.params.pid;
-  const productToUpdate = req.body;
-
-  const product = await productsModel.updateOne(
-    {
-      _id: id,
-    },
-    productToUpdate
-  );
-  req.io.emit("socket01", await productsModel.find().lean().exec());
-  res.json({
-    status: "Success",
-    product,
-  });
-});
-
-router.get("/:pid", async (req, res) => {
-  const id = req.params.pid;
-  const showProduct = await productsModel.findOne({ _id: id }).lean().exec();
-  res.render("products", { showProduct });
-});
+router.put("/:pid", updateProduct);
 
 export default router;
