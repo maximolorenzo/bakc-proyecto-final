@@ -1,7 +1,8 @@
-import FileManager from "./fileManager.js";
-class CartMaganer {
-  constructor() {
-    this.fileManager = new FileManager("db_file/carts.json");
+import fs from "fs";
+
+class FileMaganer {
+  constructor(path) {
+    this.path = path;
   }
 
   read = () => {
@@ -34,19 +35,16 @@ class CartMaganer {
     return data.find((p) => p.id == id);
   };
 
-  create = async () => {
-    const carts = await this.read();
-    const nextID = this.getNextId(carts);
-    const newCart = {
-      id: nextID,
-      products: [],
-    };
+  add = async (obj) => {
+    const list = await this.read();
+    const nextID = this.getNextId(list);
+    obj.id = nextID;
 
-    carts.push(newCart);
+    list.push(obj);
 
-    await this.write(carts);
+    await this.write(list);
 
-    return newCart;
+    return obj;
   };
 
   update = async (id, obj) => {
@@ -61,40 +59,17 @@ class CartMaganer {
     await this.write(list);
   };
 
-  addProduct = async (cartID, productID) => {
-    const cart = await this.getID(cartID);
-
-    let found = false;
-
-    for (let i = 0; i < cart.products.length; i++) {
-      if (cart.products[i].id == productID) {
-        cart.products[i].quantity++;
-
-        found = true;
-        break;
-      }
-    }
-    if (!found) {
-      cart.products.push({
-        id: productID,
-        quantity: 1,
-      });
-    }
-    await this.update(cartID, cart);
-    return cart;
-  };
-
   async deleteProduct(idDelete) {
     let pdelete = await this.get();
-    let existe = pdelete.some((e) => e.id === idDelete);
+    let existe = pdelete.some((e) => e.id == idDelete);
     if (!existe) {
       console.log(" No se borro nada ");
     } else {
-      pdelete = pdelete.filter((e) => e.id !== idDelete);
+      pdelete = pdelete.filter((e) => e.id != idDelete);
     }
 
     await this.write(pdelete);
   }
 }
 
-export default CartMaganer;
+export default FileMaganer;

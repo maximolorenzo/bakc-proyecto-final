@@ -1,8 +1,20 @@
 import passport from "passport";
 import local from "passport-local";
-import UserModel from "../dao/models/user.model.js";
-import { createHash, isValidPassword } from "../utils.js";
+import UserModel from "../dao/mongo/models/user.model.js";
+import {
+  createHash,
+  extractCookie,
+  generateToken,
+  isValidPassword,
+} from "../utils.js";
 import GitHubStrategy from "passport-github2";
+import jwt from "passport-jwt";
+import config from "./config.js";
+import userModel from "../dao/mongo/models/user.model.js";
+import cartModel from "../dao/mongo/models/cart.model.js";
+
+const JWTStrategy = jwt.Strategy;
+const ExtractJWT = jwt.ExtractJwt;
 
 const LocalStrategy = local.Strategy;
 const initializePassport = () => {
@@ -56,6 +68,7 @@ const initializePassport = () => {
             email,
             age,
             password: createHash(password),
+            cart: await cartModel.create({}),
           };
           const result = await UserModel.create(newUser);
 
@@ -97,6 +110,32 @@ const initializePassport = () => {
 
   passport.deserializeUser(async (id, done) => {
     const user = await UserModel.findById(id);
+    done(null, user);
+  });
+
+  passport.use(
+    "jwt",
+    new JWTStrategy(
+      {
+        jwtFromRequest: ExtractJWT.fromExtractors([extractCookie]),
+        secretOrKey: config.jwtPrivateKey,
+      },
+      async (jwt_payload, done) => {
+        try {
+          return done(null, jwt_payload);
+        } catch (error) {
+          return done(error);
+        }
+      }
+    )
+  );
+
+  passport.serializeUser((user, done) => {
+    done(null, user._id);
+  });
+
+  passport.deserializeUser(async (id, done) => {
+    const user = await userModel.findById(id);
     done(null, user);
   });
 };

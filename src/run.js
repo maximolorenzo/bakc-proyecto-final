@@ -1,13 +1,14 @@
 import productRouter from "./routes/product.router.js";
 import cartRouter from "./routes/cart.router.js";
-import productsModel from "./dao/models/products.models.js";
+import productsModel from "./dao/mongo/models/products.model.js";
 import chatRouter from "./routes/chat.router.js";
-import messagesModel from "./dao/models/chat.model.js";
-import productsViewsRouter from "./routes/views router/product.views.router.js";
+import messagesModel from "./dao/mongo/models/messages.model.js";
+import productsViewsRouter from "./routes/product.views.router.js";
 import sessionRouter from "./routes/session.router.js";
+import { passportCall } from "./utils.js";
 const run = (io, app) => {
   app.use("/api/session", sessionRouter);
-  app.use("/products", productsViewsRouter);
+  app.use("/products", passportCall("jwt"), productsViewsRouter);
   app.use("/api/products", productRouter);
   app.use("/api/carts", cartRouter);
   app.use("/chat", chatRouter);

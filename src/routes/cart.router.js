@@ -1,33 +1,34 @@
 import { Router } from "express";
-
-import cartModel from "../dao/models/cart.model.js";
-
+import TicketModel from "../dao/mongo/models/ticket.model.js";
+import { CartService, ProductService } from "../repository/index.js";
+import { v4 as uuidv4 } from "uuid";
+import { authorization, passportCall } from "../utils.js";
 const router = Router();
 //muestra los carritos
 router.get("/", async (req, res) => {
-  const carts = await cartModel.find().lean().exec();
+  const carts = await CartService.get();
   res.json({ carts });
 });
 
 //crea el carrito
 router.post("/", async (req, res) => {
-  const cartNew = await cartModel.create({});
+  const cartNew = await CartService.create({});
 
   res.json({ status: "success", cartNew });
 });
 //trae el carrito por id
 router.get("/:cid", async (req, res) => {
   const id = req.params.cid;
-  const carts = await cartModel.findOne({ _id: id }).populate("products.id");
+  const carts = await CartService.getByIdLean(id);
   res.render("cart", { data: carts });
 });
 
 //agrega un producto al carrito
-router.post("/:cid/product/:pid", async (req, res) => {
+router.post("/:cid/product/:pid", authorization("user"), async (req, res) => {
   const cartID = req.params.cid;
   const productID = req.params.pid;
   const quantity = req.body.quantity || 1;
-  const cart = await cartModel.findById(cartID);
+  const cart = await CartService.getById(cartID);
 
   let found = false;
   for (let i = 0; i < cart.products.length; i++) {
@@ -48,11 +49,11 @@ router.post("/:cid/product/:pid", async (req, res) => {
   res.json({ status: "success", cart });
 });
 //elemina un producto del carrito
-router.delete("/:cid/product/:pid", async (req, res) => {
+router.delete("/:cid/product/:pid", authorization("user"), async (req, res) => {
   const cartID = req.params.cid;
   const productID = req.params.pid;
   const quantity = req.body.quantity || 1;
-  const cart = await cartModel.findById(cartID);
+  const cart = await CartService.getById(cartID);
 
   if (!cart)
     return res.status(404).json({ status: "error", error: "cart not found" });
@@ -72,7 +73,7 @@ router.delete("/:cid/product/:pid", async (req, res) => {
 //elemina todos los productos de un carrito
 router.delete("/:cid", async (req, res) => {
   const cartID = req.params.cid;
-  const cart = await cartModel.findById(cartID);
+  const cart = await CartService.findById(cartID);
   cart.products = [];
   await cart.save();
   res.json({
@@ -85,7 +86,7 @@ router.delete("/:cid", async (req, res) => {
 router.put("/:cid", async (req, res) => {
   const cartID = req.params.cid;
   const cartUpdate = req.body;
-  const cart = await cartModel.findById(cartID);
+  const cart = await CartService.findById(cartID);
   cart.products = cartUpdate;
   await cart.save();
 
@@ -96,7 +97,7 @@ router.put("/:cid/product/:pid", async (req, res) => {
   const cartID = req.params.cid;
   const productID = req.params.pid;
   const quantity = req.body.quantity || 1;
-  const cart = await cartModel.findById(cartID);
+  const cart = await CartService.findById(cartID);
 
   if (!cart)
     return res.status(404).json({ status: "error", error: "cart not found" });
@@ -109,5 +110,45 @@ router.put("/:cid/product/:pid", async (req, res) => {
 
   res.json({ status: "success", cart });
 });
+
+router.post(
+  "/:cid/purchase",
+  passportCall("jwt"),
+  authorization("user"),
+  async (req, res) => {
+    const cartID = req.params.cid;
+    const cart = await CartService.getById(cartID);
+    let totalPrice = 0;
+    const noStock = [];
+    const comparation = cart.products;
+    await Promise.all(
+      comparation.map(async (p) => {
+        if (p.id.stock >= p.quantity) {
+          p.id.stock -= p.quantity;
+          ProductService.update(p.id._id, p.id);
+          totalPrice += p.id.price * p.quantity;
+          const productIDX = comparation.findIndex(
+            (item) => item.id._id == p.id._id
+          );
+          comparation.splice(productIDX, 1);
+          await cart.save();
+        } else {
+          noStock.push({
+            title: p.id.title,
+            price: p.id.price,
+            quantity: p.quantity,
+          });
+        }
+      })
+    );
+    if (totalPrice > 0)
+      await TicketModel.create({
+        purchaser: req.user.user.email,
+        amount: totalPrice,
+        code: uuidv4(),
+      });
+    res.json({ status: "Success" });
+  }
+);
 
 export default router;

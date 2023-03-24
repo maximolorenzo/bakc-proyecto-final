@@ -1,6 +1,12 @@
 import { Router } from "express";
 import passport from "passport";
-
+import config from "../config/config.js";
+import {
+  passportCall,
+  generateToken,
+  authToken,
+  authorization,
+} from "../utils.js";
 const router = Router();
 
 //Vista para registrar usuarios
@@ -45,7 +51,7 @@ router.post(
       age: req.user.age,
     };
 
-    res.redirect("/products");
+    res.cookie(config.jwtCookieName, req.user.token).redirect("/products");
   }
 );
 router.get("/faillogin", (req, res) => {
@@ -62,7 +68,7 @@ router.get("/logout", (req, res) => {
     if (err) {
       console.log(err);
       res.status(500).render("errors/base", { error: err });
-    } else res.redirect("/session/login");
+    } else res.clearCookie(config.jwtCookieName).redirect("/session/login");
   });
 });
 
@@ -79,7 +85,37 @@ router.get(
 
     req.session.user = req.user;
     console.log("User Session:", req.session.user);
-    res.redirect("/");
+    res.cookie(config.jwtCookieName, req.user.token).redirect("/products");
+  }
+);
+
+router.get(
+  "/private",
+  passportCall("jwt"),
+  authorization("user"),
+  (req, res) => {
+    res.send({ status: "success", payload: req.user, role: "user" });
+  }
+);
+
+router.get(
+  "/secret",
+  passportCall("jwt"),
+  authorization("admin"),
+  (req, res) => {
+    res.send({ status: "success", payload: req.user, role: "ADMIN" });
+  }
+);
+
+router.get(
+  "/current",
+  passportCall("jwt"),
+  authorization("user"),
+  (req, res) => {
+    console.log("get: ", req.user);
+    res.render("sessions/profile", {
+      user: req.user.user,
+    });
   }
 );
 export default router;

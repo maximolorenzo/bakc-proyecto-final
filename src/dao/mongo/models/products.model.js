@@ -11,7 +11,7 @@ const productSchema = new mongoose.Schema({
   thumbnail: Array,
   stock: Number,
 });
-
+mongoose.set("strictQuery", false);
 productSchema.plugin(mongoosePaginate);
 const productsModel = mongoose.model(productCollection, productSchema);
 
