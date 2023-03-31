@@ -7,7 +7,7 @@ import productsViewsRouter from "./routes/product.views.router.js";
 import sessionRouter from "./routes/session.router.js";
 import { passportCall } from "./utils.js";
 import mockingProduct from "./routes/mocking.router.js";
-
+import errorMidle from "./services/errors/errorMidle.js";
 const run = (io, app) => {
   app.use("/api/session", sessionRouter);
   app.use("/products", passportCall("jwt"), productsViewsRouter);
@@ -35,6 +35,8 @@ const run = (io, app) => {
       await productsModel.deleteOne({ _id: value });
     });
   });
+
+  app.use(errorMidle);
 };
 
 export default run;
