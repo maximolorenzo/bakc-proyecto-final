@@ -6,12 +6,16 @@ import messagesModel from "./dao/mongo/models/messages.model.js";
 import productsViewsRouter from "./routes/product.views.router.js";
 import sessionRouter from "./routes/session.router.js";
 import { passportCall } from "./utils.js";
+import mockingProduct from "./routes/mocking.router.js";
+
 const run = (io, app) => {
   app.use("/api/session", sessionRouter);
   app.use("/products", passportCall("jwt"), productsViewsRouter);
   app.use("/api/products", productRouter);
   app.use("/api/carts", cartRouter);
   app.use("/chat", chatRouter);
+
+  app.use("/mockingproducts", mockingProduct);
 
   io.on("connection", async (socket) => {
     console.log("New cliente connected");

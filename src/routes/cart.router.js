@@ -3,6 +3,10 @@ import TicketModel from "../dao/mongo/models/ticket.model.js";
 import { CartService, ProductService } from "../repository/index.js";
 import { v4 as uuidv4 } from "uuid";
 import { authorization, passportCall } from "../utils.js";
+import CustomError from "../services/errors/custom_error.js";
+import generateCartErrorInfo from "../services/errors/info.js";
+import EError from "../services/errors/enums.js";
+
 const router = Router();
 //muestra los carritos
 router.get("/", async (req, res) => {
@@ -28,23 +32,37 @@ router.post("/:cid/product/:pid", authorization("user"), async (req, res) => {
   const cartID = req.params.cid;
   const productID = req.params.pid;
   const quantity = req.body.quantity || 1;
-  const cart = await CartService.getById(cartID);
 
-  let found = false;
-  for (let i = 0; i < cart.products.length; i++) {
-    if (cart.products[i].id == productID) {
-      cart.products[i].quantity++;
-      found = true;
-      break;
+  try {
+    const cart = await CartService.getById(cartID);
+    const infoProduct = await ProductService.getById(productID);
+    if (infoProduct.stock < quantity) {
+      await CustomError.createError({
+        name: "add product error",
+        cause: generateCartErrorInfo(infoProduct),
+        message: "Error dont have Stock",
+        code: EError.INVALID_TYPES_ERROR,
+      });
     }
+
+    let found = false;
+    for (let i = 0; i < cart.products.length; i++) {
+      if (cart.products[i].id == productID) {
+        cart.products[i].quantity++;
+        found = true;
+        break;
+      }
+    }
+    if (found == false) {
+      cart.products.push({
+        id: productID,
+        quantity,
+      });
+    }
+    await cart.save();
+  } catch (error) {
+    console.log(error);
   }
-  if (found == false) {
-    cart.products.push({
-      id: productID,
-      quantity,
-    });
-  }
-  await cart.save();
 
   res.json({ status: "success", cart });
 });

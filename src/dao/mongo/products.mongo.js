@@ -1,30 +1,41 @@
-import ProductModel from "./models/products.model.js"
-
+import ProductModel from "./models/products.model.js";
+import generateProductErrorInfo from "../../services/error/info.js";
+import CustomError from "../../services/errors/custom_errors.js";
 export default class Product {
-    constructor() {}
-
-    get = async() => {
-        return await ProductModel.find().lean().exec()
+  constructor() {}
+  create = async (data) => {
+    if (!data.title) {
+      CustomError.createError({
+        name: "Title creation error",
+        cause: generateProdErrorInfo(),
+        message: "Error trying to create product",
+        code: EErros.INVALID_TYPES_ERROR,
+      });
     }
+    return await ProductModel.create(data);
+  };
 
-    getPaginate = async(search, options) => {
-        return await ProductModel.paginate(search, options)
-    }
+  get = async () => {
+    return await ProductModel.find().lean().exec();
+  };
 
-    create = async(data) => {
-        return await ProductModel.create(data)
-    }
+  getPaginate = async (search, options) => {
+    return await ProductModel.paginate(search, options);
+  };
 
-    getById = async (id) => {
-        return await ProductModel.findOne({_id: id})    
-    }
+  create = async (data) => {
+    return await ProductModel.create(data);
+  };
 
-    delete = async (id) => {
-        return await ProductModel.deleteOne({_id: id})
-    }
+  getById = async (id) => {
+    return await ProductModel.findOne({ _id: id });
+  };
 
-    update = async (id, productToUpdate) => {
-        return await ProductModel.updateOne({_id: id}, productToUpdate)
-    }
+  delete = async (id) => {
+    return await ProductModel.deleteOne({ _id: id });
+  };
 
+  update = async (id, productToUpdate) => {
+    return await ProductModel.updateOne({ _id: id }, productToUpdate);
+  };
 }

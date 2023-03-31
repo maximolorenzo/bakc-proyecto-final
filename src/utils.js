@@ -5,6 +5,8 @@ const __dirname = dirname(__filename);
 import jwt from "jsonwebtoken";
 import bcrypt, { hashSync } from "bcrypt";
 import config from "./config/config.js";
+import { faker } from "@faker-js/faker";
+
 export default __dirname;
 
 export const generateToken = (user) => {
@@ -65,5 +67,18 @@ export const authorization = (role) => {
     if (user.role != role)
       return res.status(403).send({ error: "No Permission" });
     next();
+  };
+};
+
+faker.locale = "es";
+
+export const generateProduct = () => {
+  return {
+    title: faker.commerce.productName(),
+    price: faker.commerce.price(),
+    department: faker.commerce.department(),
+    stock: faker.random.numeric(1),
+    id: faker.database.mongodbObjectId(),
+    image: faker.image.image(),
   };
 };

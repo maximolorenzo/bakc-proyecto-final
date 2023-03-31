@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { ProductService } from "../repository/index.js";
-
+import { authorization } from "../utils.js";
 const router = Router();
 
 //get
