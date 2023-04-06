@@ -58,7 +58,7 @@ const initializePassport = () => {
         try {
           const user = await UserModel.findOne({ email: username });
           if (user) {
-            console.log("User already exits");
+            req.logger.info("user alredy exist");
             return done(null, false);
           }
 
@@ -70,9 +70,12 @@ const initializePassport = () => {
             password: createHash(password),
             cart: await cartModel.create({}),
           };
-          const result = await UserModel.create(newUser);
-
-          return done(null, result);
+          if (!first_name || !last_name || !email || !age) {
+            req.logger.error("Faltan Datos");
+          } else {
+            const result = await UserService.create(newUser);
+            return done(null, result);
+          }
         } catch (error) {
           return done("[LOCAL] Error al obtener user " + error);
         }

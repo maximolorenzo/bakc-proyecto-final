@@ -61,7 +61,7 @@ router.post("/:cid/product/:pid", authorization("user"), async (req, res) => {
     }
     await cart.save();
   } catch (error) {
-    console.log(error);
+    req.logger.info(error);
   }
 
   res.json({ status: "success", cart });

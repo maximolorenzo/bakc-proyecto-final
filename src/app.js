@@ -8,9 +8,10 @@ import session from "express-session";
 import initializePassport from "./config/passport.config.js";
 import cookieParser from "cookie-parser";
 import passport from "passport";
+import { addLogger } from "./services/errors/logger.js";
 
 const app = express();
-
+app.use(addLogger);
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.static(__dirname + "/public"));
