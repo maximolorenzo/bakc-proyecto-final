@@ -1,0 +1,141 @@
+paths:
+  /api/products:
+    get:
+      summary: Obtiene todos los productos
+      tags:
+        - Products
+      responses:
+        "200":
+          description: Los productos fueron devueltos satisfactoriamente
+          content:
+            aplication/jason:
+              schema:
+              type: array
+              items:
+                $ref: "#components/schemas/Products"
+        "500":
+          description: Error del servidor. Usualemnte generadon query o conectando a la bd se soluciona
+    post:
+      summary: Publica los productos para que se vean
+      tags:
+        - Products
+      responses:
+        "200":
+          description: Los productos fueron devueltos satisfactoriamente
+          content:
+            aplication/jason:
+              schema:
+              type: array
+              items:
+                $ref: "#components/schemas/Products"
+        "500":
+          description: Error del servidor. Usualemnte generadon query o conectando a la bd se soluciona
+  /api/products/{pid}:
+    get:
+      summary: Obtiene un product por id
+      tags:
+        - Products
+      parameters:
+        - name: pid
+          in: path
+          description: ID del producto que se busca
+          schema:
+            $type: String
+          responses:
+            "200":
+              description: Product encontrado
+              content:
+                aplication/json:
+                  schema:
+                    $ref: "#components/schema/Products"
+    put:
+      summary: Actualiza el producto a partir del ID
+      tags:
+        - Products
+      parameters:
+        - name: pid
+          in: path
+          escription: Id del producto que se busca
+          schema:
+            $type: String
+
+    delete:
+      summary: Elimina un producto por ID
+      tags:
+        - Products
+      parameters:
+        - name: pid
+          in: path
+          escription: Id del producto que se busca borrar
+          schema:
+            $type: String
+      responses:
+        "200":
+          description: Product borrado
+          content:
+            aplication/json:
+              schema:
+                $ref: "#components/schema/Delete"
+        "401":
+          description: no hay permisos para borrar ese producto
+  /api/products/realtimeproducts:
+    get:
+      summary: Obtiene todos los productos para el admin
+      tags:
+        - Products
+      responses:
+        "200":
+          description: Los productos fueron devueltos satisfactoriamente
+          content:
+            aplication/jason:
+              schema:
+              type: array
+              items:
+                $ref: "#components/schemas/Products"
+        "403":
+          description: No hay permisos para acceder aqui
+    post:
+components:
+  schemas:
+    Products:
+      type: object
+      properties:
+        _id:
+          type: ObjectId
+          description: ID auto generdado by mongo
+        title:
+          type: String
+          description: nombre del producto
+        description:
+          type: String
+          description: descripcion del producto
+        code:
+          type: String
+          description: codigo del producto
+        price:
+          type: Number
+          description: precio del producto
+        category:
+          type: String
+          description: categoria del producto
+        thumbnail:
+          type: Array
+          description: Imagen del producto
+        stock:
+          type: Number
+          description: Cantidad que hay del producto
+        example:
+          _id: ObjetcId("644843000ee0a962027fc210")
+          title: Jordan 1
+          description: jordan 1 off white
+          code: t21m4
+          price: 350
+          category: Nike/Jordan
+          thumbnail: https://images.stockx.com/images/Air-Jordan-1-Retro-High-Off-White-University-Blue-Product.jpg?fit=fill&bg=FFFFFF&w=700&h=500&fm=webp&auto=compress&q=90&dpr=2&trim=color&updated_at=1606321054
+          stock: 20
+    Delete:
+      type: objetc
+      properties:
+        _id: id auto generado por mongo
+        example:
+          _id: ObjetcId("644843000ee0a962027fc210")

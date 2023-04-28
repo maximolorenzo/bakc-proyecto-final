@@ -8,6 +8,8 @@ import sessionRouter from "./routes/session.router.js";
 import { passportCall } from "./utils.js";
 import mockingProduct from "./routes/mocking.router.js";
 import errorMidle from "./services/errors/errorMidle.js";
+import __dirname from "./utils.js";
+
 const run = (io, app) => {
   app.use("/api/session", sessionRouter);
   app.use("/products", passportCall("jwt"), productsViewsRouter);

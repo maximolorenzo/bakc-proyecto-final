@@ -49,7 +49,7 @@ router.put("/:pid", async (req, res) => {
   });
 });
 
-router.get("/:id", async (req, res) => {
+router.get("/:pid", async (req, res) => {
   const id = req.params.pid;
   const showProduct = await ProductService.getById({ _id: id });
   res.render("products", { showProduct });

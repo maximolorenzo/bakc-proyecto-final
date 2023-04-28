@@ -4,7 +4,7 @@ import { CartService, ProductService } from "../repository/index.js";
 import { v4 as uuidv4 } from "uuid";
 import { authorization, passportCall } from "../utils.js";
 import CustomError from "../services/errors/custom_error.js";
-import generateCartErrorInfo from "../services/errors/info.js";
+import { generateCartErrorInfo } from "../services/errors/info.js";
 import EError from "../services/errors/enums.js";
 
 const router = Router();

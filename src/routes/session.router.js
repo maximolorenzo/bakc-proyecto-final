@@ -25,7 +25,7 @@ router.post(
   }
 );
 router.get("/failregister", (req, res) => {
-  console.log("Fail Strategy");
+  req.logger.warning("Fail Strategy");
   res.send({ error: "Failed" });
 });
 

@@ -3,7 +3,8 @@ import run from "./run.js";
 import handlebars from "express-handlebars";
 import { Server } from "socket.io";
 import __dirname from "./utils.js";
-
+import swaggerJSDoc from "swagger-jsdoc";
+import swaggerUiExpress from "swagger-ui-express";
 import session from "express-session";
 import initializePassport from "./config/passport.config.js";
 import cookieParser from "cookie-parser";
@@ -30,6 +31,19 @@ app.use(
 initializePassport();
 app.use(passport.initialize());
 app.use(passport.session());
+
+const swaggerOptions = {
+  definition: {
+    openapi: "3.0.1",
+    info: {
+      title: "Proyecto back ecommerce",
+      description: "Este es un proyecto para entregar de CoderHouse",
+    },
+  },
+  apis: [`${__dirname}/docs/**/*.yaml`],
+};
+const specs = swaggerJSDoc(swaggerOptions);
+app.use("/apidocs", swaggerUiExpress.serve, swaggerUiExpress.setup(specs));
 
 const httpServer = app.listen(8080, () => console.log("Listening..."));
 const io = new Server(httpServer);

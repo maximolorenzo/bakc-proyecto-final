@@ -1,0 +1,107 @@
+paths:
+  /api/carts:
+    get:
+      summary: Obtiene los carritos
+      tags:
+        - Carts
+      responses:
+        "200":
+          description: Los usarios fueron devueltos satisfactoriamente
+          content:
+            aplication/jason:
+              schema:
+              type: array
+              items:
+                $ref: "#components/schemas/Cart"
+        "500":
+          description: Error del servidor. Usualemnte generadon query o conectando a la bd se soluciona
+    post:
+      summary: crea los carritos
+      tags:
+        - Carts
+      responses:
+        "200":
+          description: El cararito se creo satisfactoriamente
+          content:
+            aplication/jason:
+              schema:
+              type: array
+              items:
+                $ref: "#components/schemas/Cart"
+  /api/carts/{cid}:
+    get:
+      summary: Trae el carrito por ID
+      tags:
+        - Carts
+      responses:
+        "200":
+          description: el carrito se trajo correctamente
+          content:
+            aplication/jason:
+              schema:
+              type: array
+              items:
+                $ref: "#components/schemas/Cart"
+    put:
+      summary: actualiza el carrito
+      tags:
+        - Carts
+      responses:
+        "200":
+          description: el carrito se trajo correctamente
+    delete:
+      summary: elimina todos los productos de un carrito
+      tags:
+        - Carts
+      responses:
+        "200":
+          description: product deleted
+  /api/{cid}/product/{pid}:
+    post:
+      summary: agrega un producto al carrito
+      tags:
+        - Carts
+      responses:
+        "200":
+          description: el carrito se trajo correctamente
+    delete:
+      summary: elimina un producto de lcarrito
+      tags:
+        - Carts
+      responses:
+        "200":
+          description: el producto se elimino correctamente
+        "404":
+          description: el producto que se quiso eliminar no esta en el carrito
+    put:
+      summary: suma la cantidad
+      tags:
+        - Carts
+      responses:
+        "200":
+          description: la cantidad se sumo satisfactoriamente
+        "404":
+          description: cart not found
+
+  /api/carts/{cid}/purchase:
+    post:
+      summary: Crea un ticket por la compra
+      tags:
+        - Carts
+      responses:
+        "200":
+          description: el ticket se creo satisfactoriamente
+components:
+  schemas:
+    Carts:
+      type: objectId
+      properties:
+        _id:
+          type: ObjectId
+          description: ID autogenerado por Mongo
+        products:
+          type: Array
+          description: Array de productos agregados al carrito. Cada elemento es un objeto con las propiedades product (ObjectId que hace referencia al ID del producto) y quantity (la cantidad de dicho producto)
+      example:
+        _id: ObjectId("641b787a0ea53502047688d3")
+        products: [{ product: 63d8b0707126efe3d18d1bb3, quantity: 1 }]

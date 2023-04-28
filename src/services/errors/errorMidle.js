@@ -1,4 +1,4 @@
-import EErros from "../services/errors/enums.js";
+import EErros from "./enums.js";
 
 export default (error, req, res, next) => {
   req.logger.info(error.cause);
